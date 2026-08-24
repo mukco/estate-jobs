@@ -5,8 +5,7 @@ require "estate/jobs/engine"
 module Estate
   module Jobs
     class InternalJobsController < Estate::Jobs::ApplicationController
-      TOKEN = Engine.instance.config.estate_jobs.token ||
-              ENV.fetch("ESTATE_JOBS_TOKEN", nil)
+      TOKEN = ENV.fetch("ESTATE_JOBS_TOKEN", nil)
 
       before_action :authorize!
 
