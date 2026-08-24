@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-require "estate/jobs/version"
+require "active_support"
+require "active_support/core_ext/integer/time"
+require_relative "estate/jobs/version"
+require_relative "estate/jobs/engine"
 
 module Estate
   module Jobs
