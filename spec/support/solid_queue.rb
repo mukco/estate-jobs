@@ -40,6 +40,16 @@ ActiveRecord::Base.establish_connection(
   username: ENV.fetch("PGUSER", "baseball"), password: ENV.fetch("PGPASSWORD", "baseball")
 )
 
+# Fresh CI services ship an empty cluster: make the database if it isn't there.
+begin
+  ActiveRecord::Base.connection.select_value("SELECT 1")
+rescue ActiveRecord::NoDatabaseError
+  config = ActiveRecord::Base.connection_db_config.configuration_hash
+  boot = ActiveRecord::Base.postgresql_connection(config.merge(database: "postgres"))
+  boot.execute("CREATE DATABASE #{config[:database]} OWNER #{config[:username]}")
+  ActiveRecord::Base.establish_connection(config)
+end
+
 SQL = File.read(File.join(__dir__, "solid_queue_schema.sql"))
 AR = ActiveRecord::Base.connection
 
