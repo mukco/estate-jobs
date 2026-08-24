@@ -44,10 +44,20 @@ ActiveRecord::Base.establish_connection(
 begin
   ActiveRecord::Base.connection.select_value("SELECT 1")
 rescue ActiveRecord::NoDatabaseError
-  config = ActiveRecord::Base.connection_db_config.configuration_hash
-  boot = ActiveRecord::Base.postgresql_connection(config.merge(database: "postgres"))
-  boot.execute("CREATE DATABASE #{config[:database]} OWNER #{config[:username]}")
-  ActiveRecord::Base.establish_connection(config)
+  require "pg"
+  boot = PG.connect(
+    host: ENV.fetch("PGHOST", "127.0.0.1"), port: ENV.fetch("PGPORT", 5432),
+    user: ENV.fetch("PGUSER", "baseball"), password: ENV.fetch("PGPASSWORD", "baseball"),
+    dbname: "postgres"
+  )
+  boot.exec("CREATE DATABASE #{ENV.fetch('PGDATABASE', 'estate_jobs_test')} OWNER #{ENV.fetch('PGUSER', 'baseball')}")
+  boot.close
+  ActiveRecord::Base.establish_connection(
+    adapter: "postgresql", host: ENV.fetch("PGHOST", "127.0.0.1"),
+    port: ENV.fetch("PGPORT", 5432).to_i,
+    database: ENV.fetch("PGDATABASE", "estate_jobs_test"),
+    username: ENV.fetch("PGUSER", "baseball"), password: ENV.fetch("PGPASSWORD", "baseball")
+  )
 end
 
 SQL = File.read(File.join(__dir__, "solid_queue_schema.sql"))
