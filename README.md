@@ -42,7 +42,7 @@ Every section is individually rescued: an app without Solid Queue reports
 ## The client
 
 ```ruby
-Estate::Jobs::Client.fetch("https://baseball.edwardsfamily.app/internal/jobs", token: token)
+Estate::Jobs::Client.fetch("https://app.example.com/internal/jobs", token: token)
 # => { ok: true,  payload: {...} }
 # => { ok: false, error: "HTTP 401" }
 ```
