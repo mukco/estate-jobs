@@ -4,6 +4,7 @@ require "active_support"
 require "active_support/core_ext/integer/time"
 require_relative "jobs/version"
 require_relative "jobs/engine"
+require_relative "jobs/queries"
 
 module Estate
   module Jobs
